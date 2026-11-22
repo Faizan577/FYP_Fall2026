@@ -5,7 +5,11 @@ import '../screens/auth/onboarding_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/auth/welcome_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
+import '../screens/farmer/become_farmer_screen.dart';
+import '../screens/farmer/farmer_listing_screen.dart';
+import '../screens/farmer/hire_farmer_landing_screen.dart';
 import '../screens/help/help_guide_screen.dart';
+import '../screens/land/offer_land_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/profile/profile_screen.dart';
@@ -21,6 +25,10 @@ abstract final class AppRoutes {
   static const editProfile = '/profile/edit';
   static const help = '/help';
   static const notifications = '/notifications';
+  static const hireFarmer = '/hire-farmer';
+  static const farmerListing = '/farmer-listing';
+  static const becomeFarmer = '/become-farmer';
+  static const offerLand = '/offer-land';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final Widget? screen = switch (settings.name) {
@@ -34,6 +42,10 @@ abstract final class AppRoutes {
       editProfile => const EditProfileScreen(),
       help => const HelpGuideScreen(),
       notifications => const NotificationsScreen(),
+      hireFarmer => const HireFarmerLandingScreen(),
+      farmerListing => const FarmerListingScreen(),
+      becomeFarmer => const BecomeFarmerScreen(),
+      offerLand => const OfferLandScreen(),
       _ => null,
     };
     if (screen == null) return null;

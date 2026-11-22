@@ -4,7 +4,11 @@ import '../../providers/auth_scope.dart';
 import '../../widgets/feature_tile.dart';
 import '../../widgets/section_heading.dart';
 import '../coming_soon_screen.dart';
+import '../farmer/become_farmer_screen.dart';
+import '../farmer/farmer_listing_screen.dart';
+import '../farmer/widgets/login_required_dialog.dart';
 import '../help/help_guide_screen.dart';
+import '../land/offer_land_screen.dart';
 import '../notifications/notifications_screen.dart';
 import '../profile/profile_screen.dart';
 
@@ -393,20 +397,62 @@ class _HomeTab extends StatelessWidget {
             children: [
               FeatureRowTile(
                 title: 'Hire Farmer',
-                subtitle: 'Connect with experienced farm labor',
-                icon: Icons.handshake_rounded,
+                subtitle: 'Find skilled farmers for your land',
+                icon: Icons.groups_rounded,
                 tint: AppColors.communityTint,
                 iconColor: AppColors.communityAccent,
                 showDivider: true,
-                onTap: () => _openComingSoon(context, 'Hire Farmer'),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => const FarmerListingScreen(),
+                  ),
+                ),
+              ),
+              FeatureRowTile(
+                title: 'Become a Farmer',
+                subtitle: 'Offer your farming services',
+                icon: Icons.person_add_alt_1_rounded,
+                tint: AppColors.soft,
+                iconColor: AppColors.primary,
+                showDivider: true,
+                onTap: () async {
+                  if (isGuest) {
+                    await LoginRequiredDialog.show(
+                      context,
+                      actionName: 'register as a farmer',
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => const BecomeFarmerScreen(),
+                      ),
+                    );
+                  }
+                },
               ),
               FeatureRowTile(
                 title: 'Offer Land',
-                subtitle: 'List available land for farming',
+                subtitle: 'Find farmers for your land',
                 icon: Icons.landscape_rounded,
-                tint: AppColors.communityTint,
-                iconColor: AppColors.communityAccent,
-                onTap: () => _openComingSoon(context, 'Offer Land'),
+                tint: AppColors.farmTint,
+                iconColor: AppColors.farmAccent,
+                onTap: () async {
+                  if (isGuest) {
+                    await LoginRequiredDialog.show(
+                      context,
+                      actionName: 'offer your land',
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => const OfferLandScreen(),
+                      ),
+                    );
+                  }
+                },
               ),
             ],
           ),
@@ -558,38 +604,223 @@ class _PlantsExploreTab extends StatelessWidget {
 class _CommunityExploreTab extends StatelessWidget {
   const _CommunityExploreTab();
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppColors.cream,
-    appBar: AppBar(title: const Text('Grower Community')),
-    body: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+  Widget build(BuildContext context) {
+    final auth = AuthScope.of(context);
+    final isGuest = auth.isGuest || (auth.profile?.isGuest ?? false);
+
+    return Scaffold(
+      backgroundColor: AppColors.cream,
+      appBar: AppBar(title: const Text('Grower Community')),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 32),
+        children: [
+          // Header Card
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.borderLight),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 54,
+                  height: 54,
+                  decoration: BoxDecoration(
+                    color: AppColors.communityTint,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(Icons.handshake_rounded, color: AppColors.communityAccent, size: 28),
+                ),
+                const SizedBox(width: 14),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Agricultural Community',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.dark),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Connecting landowners, skilled farmers, and service providers across Pakistan.',
+                        style: TextStyle(fontSize: 12, color: AppColors.muted, height: 1.35),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // 1. Hire Farmer Card
+          _communityActionCard(
+            context,
+            icon: Icons.groups_rounded,
+            title: 'Hire Farmer',
+            subtitle: 'Find skilled farmers for your land',
+            description: 'Browse verified growers, view ratings & skills, and send direct hiring requests.',
+            tint: AppColors.communityTint,
+            accent: AppColors.communityAccent,
+            buttonText: 'Browse Farmers',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                builder: (_) => const FarmerListingScreen(),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // 2. Become a Farmer Card
+          _communityActionCard(
+            context,
+            icon: Icons.person_add_alt_1_rounded,
+            title: 'Become a Farmer',
+            subtitle: 'Offer your farming services',
+            description: 'Register your skills, daily rates, and availability to receive work requests.',
+            tint: AppColors.soft,
+            accent: AppColors.primary,
+            buttonText: 'Register as Farmer',
+            onTap: () async {
+              if (isGuest) {
+                await LoginRequiredDialog.show(
+                  context,
+                  actionName: 'register as a farmer',
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => const BecomeFarmerScreen(),
+                  ),
+                );
+              }
+            },
+          ),
+          const SizedBox(height: 14),
+
+          // 3. Offer Land Card
+          _communityActionCard(
+            context,
+            icon: Icons.landscape_rounded,
+            title: 'Offer Land',
+            subtitle: 'Find farmers for your land',
+            description: 'List your agricultural acreage and water resources to partner with reliable growers.',
+            tint: AppColors.farmTint,
+            accent: AppColors.farmAccent,
+            buttonText: 'Offer Your Land',
+            onTap: () async {
+              if (isGuest) {
+                await LoginRequiredDialog.show(
+                  context,
+                  actionName: 'offer your land',
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => const OfferLandScreen(),
+                  ),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _communityActionCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required String description,
+    required Color tint,
+    required Color accent,
+    required String buttonText,
+    required VoidCallback onTap,
+  }) => Container(
+    padding: const EdgeInsets.all(18),
+    decoration: BoxDecoration(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(22),
+      border: Border.all(color: AppColors.borderLight),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.02),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
             Container(
-              width: 80,
-              height: 80,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
-                color: AppColors.communityTint,
-                borderRadius: BorderRadius.circular(24),
+                color: tint,
+                borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(Icons.handshake_rounded, color: AppColors.communityAccent, size: 40),
+              child: Icon(icon, color: accent, size: 24),
             ),
-            const SizedBox(height: 18),
-            const Text(
-              'Farmer & Land Community',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.dark),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Connect with local agricultural experts, skilled farm workers, and landowners looking to lease.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.muted, height: 1.45),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.dark,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      color: accent,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 10),
+        Text(
+          description,
+          style: const TextStyle(fontSize: 13, color: AppColors.muted, height: 1.4),
+        ),
+        const SizedBox(height: 14),
+        SizedBox(
+          width: double.infinity,
+          height: 44,
+          child: ElevatedButton(
+            onPressed: onTap,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: accent,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            ),
+            child: Text(
+              buttonText,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5),
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }
