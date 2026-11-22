@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../features/tree_recommendation/screens/tree_intro_screen.dart';
 import '../../providers/auth_scope.dart';
 import '../../widgets/feature_tile.dart';
 import '../../widgets/section_heading.dart';
@@ -280,7 +281,7 @@ class _HomeTab extends StatelessWidget {
                 icon: Icons.park_rounded,
                 tint: AppColors.farmTint,
                 iconColor: AppColors.farmAccent,
-                onTap: () => _openComingSoon(context, 'Tree Recommendation'),
+                onTap: () => _openTreeRecommendation(context),
               ),
             ],
           ),
@@ -308,7 +309,7 @@ class _HomeTab extends StatelessWidget {
                 tint: AppColors.farmTint,
                 iconColor: AppColors.farmAccent,
                 showDivider: true,
-                onTap: () => _openComingSoon(context, 'Tree Recommendation'),
+                onTap: () => _openTreeRecommendation(context),
               ),
               FeatureRowTile(
                 title: 'Plantation Planning',
@@ -421,6 +422,13 @@ class _HomeTab extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (_) => ComingSoonScreen(feature: feature),
       ),
+    );
+  }
+
+  void _openTreeRecommendation(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(builder: (_) => const TreeIntroScreen()),
     );
   }
 }

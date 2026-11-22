@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import '../../navigation/protected_feature_navigation.dart';
 import '../../providers/auth_scope.dart';
 import '../../widgets/baghbani_logo.dart';
 import '../../widgets/primary_button.dart';
@@ -8,7 +9,10 @@ import 'forgot_password_screen.dart';
 import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.onAuthenticated});
+
+  final WidgetBuilder? onAuthenticated;
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -28,17 +32,31 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
-    final ok = await AuthScope.of(context).signIn(_email.text, _password.text);
-    if (!mounted) return;
-    if (ok) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute<void>(builder: (_) => const DashboardScreen()),
-        (_) => false,
-      );
-    } else {
+    try {
+      final ok =
+          await AuthScope.of(context).signIn(_email.text, _password.text);
+      if (!mounted) return;
+      if (ok) {
+        ProtectedFeatureNavigation.completeAuthentication(
+          context,
+          destination: widget.onAuthenticated,
+          fallbackDestination: (_) => const DashboardScreen(),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Invalid email or password. Please try again or create an account.'),
+            backgroundColor: AppColors.gardenAccent,
+          ),
+        );
+      }
+    } on Exception catch (error) {
+      debugPrint('Login failed: $error');
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Invalid email or password. Please try again or create an account.'),
+          content: Text('Unable to log in right now. Please try again.'),
           backgroundColor: AppColors.gardenAccent,
         ),
       );
@@ -144,7 +162,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (_) => const SignupScreen(),
+                        builder: (_) => SignupScreen(
+                          onAuthenticated: widget.onAuthenticated,
+                        ),
                       ),
                     ),
                     child: const Text(

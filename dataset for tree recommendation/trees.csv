@@ -1,0 +1,10 @@
+tree_name,scientific_name,temp_opt_min,temp_opt_max,temp_abs_min,temp_abs_max,rain_opt_min,rain_opt_max,rain_abs_min,rain_abs_max,ph_opt_min,ph_opt_max,ph_abs_min,ph_abs_max,spacing,source
+Aam,Mangifera indica,24,30,8,48,600,1500,300,2600,5.5,7.5,4.3,8.5,10-12 feet,EcoCrop
+Kinnow,Citrus reticulata,23,34,12,38,1200,1800,300,4000,6,6.8,5.5,8.3,6-7 feet,EcoCrop
+Amrood,Psidium guajava,20,33,10,45,1000,3000,400,5000,5.5,7.5,4,8.5,6-7 feet,EcoCrop
+Ber,Ziziphus mauritiana,25,42,7,50,300,1500,130,4000,5.5,7.5,5,8.5,6-7 feet,EcoCrop
+Jaman,Syzygium cumini,20,32,12,48,1500,6000,800,9900,5.5,7,4.5,8,8-10 feet,EcoCrop
+Anar,Punica granatum,23,32,8,40,900,1200,400,4200,6.5,7.5,5.8,8.5,6-7 feet,EcoCrop
+Shehtoot,Morus alba,20,28,13,45,700,2500,300,5100,5.5,7.5,4.3,8.3,6-7 feet,EcoCrop
+Nimbu,Citrus limon,15,28,12,36,1000,2300,300,4000,6.5,7,5.5,8,6-7 feet,EcoCrop
+Khajoor,Phoenix dactylifera,26,45,10,52,200,300,100,400,6.5,8,6,8.5,8-10 feet,EcoCrop

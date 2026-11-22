@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/user_profile.dart';
+import '../../navigation/protected_feature_navigation.dart';
 import '../../providers/auth_scope.dart';
 import '../../widgets/baghbani_logo.dart';
 import '../../widgets/primary_button.dart';
@@ -8,7 +9,10 @@ import '../dashboard/dashboard_screen.dart';
 import 'login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+  const SignupScreen({super.key, this.onAuthenticated});
+
+  final WidgetBuilder? onAuthenticated;
+
   @override
   State<SignupScreen> createState() => _SignupScreenState();
 }
@@ -41,12 +45,32 @@ class _SignupScreenState extends State<SignupScreen> {
       location: _location.text.trim(),
       isGuest: false,
     );
-    await AuthScope.of(context).register(user, _password.text);
-    if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute<void>(builder: (_) => const DashboardScreen()),
-      (_) => false,
-    );
+    try {
+      final created =
+          await AuthScope.of(context).register(user, _password.text);
+      if (!mounted) return;
+      if (!created) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('An account with this email already exists.')),
+        );
+        return;
+      }
+      ProtectedFeatureNavigation.completeAuthentication(
+        context,
+        destination: widget.onAuthenticated,
+        fallbackDestination: (_) => const DashboardScreen(),
+      );
+    } on Exception catch (error) {
+      debugPrint('Account creation failed: $error');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Unable to create your account right now. Please try again.'),
+        ),
+      );
+    }
   }
 
   @override
@@ -145,7 +169,9 @@ class _SignupScreenState extends State<SignupScreen> {
                     onPressed: () => Navigator.pushReplacement(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (_) => const LoginScreen(),
+                        builder: (_) => LoginScreen(
+                          onAuthenticated: widget.onAuthenticated,
+                        ),
                       ),
                     ),
                     child: const Text(

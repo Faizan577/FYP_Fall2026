@@ -4,7 +4,6 @@ import '../../providers/auth_scope.dart';
 import '../../widgets/primary_button.dart';
 import '../auth/login_screen.dart';
 import '../auth/signup_screen.dart';
-import '../auth/welcome_screen.dart';
 import '../help/help_guide_screen.dart';
 import '../notifications/notifications_screen.dart';
 import 'edit_profile_screen.dart';
@@ -263,7 +262,7 @@ class ProfileScreen extends StatelessWidget {
               if (context.mounted) {
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute<void>(
-                    builder: (_) => const WelcomeScreen(),
+                    builder: (_) => const LoginScreen(),
                   ),
                   (_) => false,
                 );
