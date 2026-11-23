@@ -11,6 +11,12 @@ import '../screens/farmer/hire_farmer_landing_screen.dart';
 import '../screens/help/help_guide_screen.dart';
 import '../screens/land/offer_land_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
+import '../screens/nursery/browse_plants_screen.dart';
+import '../screens/nursery/my_orders_screen.dart';
+import '../screens/nursery/nearby_nurseries_screen.dart';
+import '../screens/nursery/nursery_gate_screen.dart';
+import '../screens/nursery/register_nursery_screen.dart';
+import '../screens/nursery/wishlist_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/profile/profile_screen.dart';
 
@@ -29,6 +35,13 @@ abstract final class AppRoutes {
   static const farmerListing = '/farmer-listing';
   static const becomeFarmer = '/become-farmer';
   static const offerLand = '/offer-land';
+  // Nursery routes
+  static const browsePlants = '/browse-plants';
+  static const nearbyNurseries = '/nearby-nurseries';
+  static const wishlist = '/wishlist';
+  static const myOrders = '/my-orders';
+  static const myNursery = '/my-nursery';
+  static const registerNursery = '/register-nursery';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final Widget? screen = switch (settings.name) {
@@ -46,6 +59,13 @@ abstract final class AppRoutes {
       farmerListing => const FarmerListingScreen(),
       becomeFarmer => const BecomeFarmerScreen(),
       offerLand => const OfferLandScreen(),
+      // Nursery
+      browsePlants => const BrowsePlantsScreen(),
+      nearbyNurseries => const NearbyNurseriesScreen(),
+      wishlist => const WishlistScreen(),
+      myOrders => const MyOrdersScreen(),
+      myNursery => const NurseryGateScreen(),
+      registerNursery => const RegisterNurseryScreen(),
       _ => null,
     };
     if (screen == null) return null;
