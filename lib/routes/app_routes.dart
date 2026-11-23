@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/land.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/onboarding_screen.dart';
@@ -10,6 +11,8 @@ import '../screens/farmer/farmer_listing_screen.dart';
 import '../screens/farmer/hire_farmer_landing_screen.dart';
 import '../screens/help/help_guide_screen.dart';
 import '../screens/land/offer_land_screen.dart';
+import '../screens/land/land_marketplace_screens.dart';
+import '../screens/land/my_land_listings_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/profile/profile_screen.dart';
@@ -29,6 +32,8 @@ abstract final class AppRoutes {
   static const farmerListing = '/farmer-listing';
   static const becomeFarmer = '/become-farmer';
   static const offerLand = '/offer-land';
+  static const findLand = '/find-land';
+  static const myLandListings = '/my-land-listings';
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     final Widget? screen = switch (settings.name) {
@@ -45,7 +50,11 @@ abstract final class AppRoutes {
       hireFarmer => const HireFarmerLandingScreen(),
       farmerListing => const FarmerListingScreen(),
       becomeFarmer => const BecomeFarmerScreen(),
-      offerLand => const OfferLandScreen(),
+      offerLand => OfferLandScreen(land: settings.arguments as Land?),
+      findLand => const FindLandScreen(),
+      myLandListings => MyLandListingsScreen(
+          ownerUserId: settings.arguments as String? ?? '',
+        ),
       _ => null,
     };
     if (screen == null) return null;

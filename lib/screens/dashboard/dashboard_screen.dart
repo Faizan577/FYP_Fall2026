@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../farmer/widgets/community_login_gate.dart';
 import '../../core/theme/app_theme.dart';
 import '../../features/tree_recommendation/screens/tree_intro_screen.dart';
 import '../../providers/auth_scope.dart';
@@ -25,10 +26,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      _HomeTab(onOpenNotifications: () => Navigator.push(
-        context,
-        MaterialPageRoute<void>(builder: (_) => const NotificationsScreen()),
-      )),
+      _HomeTab(
+          onOpenNotifications: () => Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                    builder: (_) => const NotificationsScreen()),
+              )),
       const _PlantsExploreTab(),
       const _CommunityExploreTab(),
       const ProfileScreen(),
@@ -58,17 +61,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             NavigationDestination(
               icon: Icon(Icons.local_florist_outlined, color: AppColors.muted),
-              selectedIcon: Icon(Icons.local_florist_rounded, color: AppColors.primary),
+              selectedIcon:
+                  Icon(Icons.local_florist_rounded, color: AppColors.primary),
               label: 'Plants',
             ),
             NavigationDestination(
               icon: Icon(Icons.groups_outlined, color: AppColors.muted),
-              selectedIcon: Icon(Icons.groups_rounded, color: AppColors.primary),
+              selectedIcon:
+                  Icon(Icons.groups_rounded, color: AppColors.primary),
               label: 'Community',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline_rounded, color: AppColors.muted),
-              selectedIcon: Icon(Icons.person_rounded, color: AppColors.primary),
+              selectedIcon:
+                  Icon(Icons.person_rounded, color: AppColors.primary),
               label: 'Profile',
             ),
           ],
@@ -87,7 +93,8 @@ class _HomeTab extends StatelessWidget {
     final auth = AuthScope.of(context);
     final user = auth.profile;
     final isGuest = auth.isGuest || (user?.isGuest ?? false);
-    final displayName = isGuest ? 'Guest' : (user?.name.split(' ').first ?? 'Gardener');
+    final displayName =
+        isGuest ? 'Guest' : (user?.name.split(' ').first ?? 'Gardener');
 
     return SafeArea(
       child: ListView(
@@ -154,7 +161,8 @@ class _HomeTab extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.search_rounded, color: AppColors.muted, size: 22),
+                const Icon(Icons.search_rounded,
+                    color: AppColors.muted, size: 22),
                 const SizedBox(width: 12),
                 const Expanded(
                   child: Text(
@@ -165,7 +173,8 @@ class _HomeTab extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(Icons.tune_rounded, color: AppColors.muted.withValues(alpha: 0.6), size: 18),
+                Icon(Icons.tune_rounded,
+                    color: AppColors.muted.withValues(alpha: 0.6), size: 18),
               ],
             ),
           ),
@@ -222,9 +231,11 @@ class _HomeTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     InkWell(
-                      onTap: () => _openComingSoon(context, 'Land Satellite Analysis'),
+                      onTap: () =>
+                          _openComingSoon(context, 'Land Satellite Analysis'),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 11),
                         decoration: BoxDecoration(
                           color: AppColors.sageLight,
                           borderRadius: BorderRadius.circular(16),
@@ -440,12 +451,8 @@ class _HomeTab extends StatelessWidget {
                 tint: AppColors.farmTint,
                 iconColor: AppColors.farmAccent,
                 onTap: () async {
-                  if (isGuest) {
-                    await LoginRequiredDialog.show(
-                      context,
-                      actionName: 'offer your land',
-                    );
-                  } else {
+                  if (await requireCommunityLogin(context,
+                      actionName: 'offer your land')) {
                     Navigator.push(
                       context,
                       MaterialPageRoute<void>(
@@ -454,6 +461,14 @@ class _HomeTab extends StatelessWidget {
                     );
                   }
                 },
+              ),
+              FeatureRowTile(
+                title: 'Find Land',
+                subtitle: 'Browse available farmland',
+                icon: Icons.search_rounded,
+                tint: AppColors.farmTint,
+                iconColor: AppColors.farmAccent,
+                onTap: () => Navigator.pushNamed(context, '/find-land'),
               ),
             ],
           ),
@@ -574,39 +589,43 @@ class _PlantsExploreTab extends StatelessWidget {
   const _PlantsExploreTab();
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppColors.cream,
-    appBar: AppBar(title: const Text('Plants & Nurseries')),
-    body: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.gardenTint,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: const Icon(Icons.local_florist_rounded, color: AppColors.gardenAccent, size: 40),
+        backgroundColor: AppColors.cream,
+        appBar: AppBar(title: const Text('Plants & Nurseries')),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: AppColors.gardenTint,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: const Icon(Icons.local_florist_rounded,
+                      color: AppColors.gardenAccent, size: 40),
+                ),
+                const SizedBox(height: 18),
+                const Text(
+                  'Plant Catalog & Care',
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.dark),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Browse hundreds of plants, seeds and care guides from certified nurseries.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.muted, height: 1.45),
+                ),
+              ],
             ),
-            const SizedBox(height: 18),
-            const Text(
-              'Plant Catalog & Care',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.dark),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Browse hundreds of plants, seeds and care guides from certified nurseries.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.muted, height: 1.45),
-            ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _CommunityExploreTab extends StatelessWidget {
@@ -639,7 +658,8 @@ class _CommunityExploreTab extends StatelessWidget {
                     color: AppColors.communityTint,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Icon(Icons.handshake_rounded, color: AppColors.communityAccent, size: 28),
+                  child: const Icon(Icons.handshake_rounded,
+                      color: AppColors.communityAccent, size: 28),
                 ),
                 const SizedBox(width: 14),
                 const Expanded(
@@ -648,12 +668,16 @@ class _CommunityExploreTab extends StatelessWidget {
                     children: [
                       Text(
                         'Agricultural Community',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.dark),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.dark),
                       ),
                       SizedBox(height: 2),
                       Text(
                         'Connecting landowners, skilled farmers, and service providers across Pakistan.',
-                        style: TextStyle(fontSize: 12, color: AppColors.muted, height: 1.35),
+                        style: TextStyle(
+                            fontSize: 12, color: AppColors.muted, height: 1.35),
                       ),
                     ],
                   ),
@@ -669,7 +693,8 @@ class _CommunityExploreTab extends StatelessWidget {
             icon: Icons.groups_rounded,
             title: 'Hire Farmer',
             subtitle: 'Find skilled farmers for your land',
-            description: 'Browse verified growers, view ratings & skills, and send direct hiring requests.',
+            description:
+                'Browse verified growers, view ratings & skills, and send direct hiring requests.',
             tint: AppColors.communityTint,
             accent: AppColors.communityAccent,
             buttonText: 'Browse Farmers',
@@ -688,7 +713,8 @@ class _CommunityExploreTab extends StatelessWidget {
             icon: Icons.person_add_alt_1_rounded,
             title: 'Become a Farmer',
             subtitle: 'Offer your farming services',
-            description: 'Register your skills, daily rates, and availability to receive work requests.',
+            description:
+                'Register your skills, daily rates, and availability to receive work requests.',
             tint: AppColors.soft,
             accent: AppColors.primary,
             buttonText: 'Register as Farmer',
@@ -716,17 +742,14 @@ class _CommunityExploreTab extends StatelessWidget {
             icon: Icons.landscape_rounded,
             title: 'Offer Land',
             subtitle: 'Find farmers for your land',
-            description: 'List your agricultural acreage and water resources to partner with reliable growers.',
+            description:
+                'List your agricultural acreage and water resources to partner with reliable growers.',
             tint: AppColors.farmTint,
             accent: AppColors.farmAccent,
             buttonText: 'Offer Your Land',
             onTap: () async {
-              if (isGuest) {
-                await LoginRequiredDialog.show(
-                  context,
-                  actionName: 'offer your land',
-                );
-              } else {
+              if (await requireCommunityLogin(context,
+                  actionName: 'offer your land')) {
                 Navigator.push(
                   context,
                   MaterialPageRoute<void>(
@@ -735,6 +758,20 @@ class _CommunityExploreTab extends StatelessWidget {
                 );
               }
             },
+          ),
+          const SizedBox(height: 14),
+
+          _communityActionCard(
+            context,
+            icon: Icons.search_rounded,
+            title: 'Find Land',
+            subtitle: 'Browse available farmland',
+            description:
+                'Explore land listings and apply for farming opportunities that suit you.',
+            tint: AppColors.farmTint,
+            accent: AppColors.farmAccent,
+            buttonText: 'Browse Land',
+            onTap: () => Navigator.pushNamed(context, '/find-land'),
           ),
         ],
       ),
@@ -751,84 +788,88 @@ class _CommunityExploreTab extends StatelessWidget {
     required Color accent,
     required String buttonText,
     required VoidCallback onTap,
-  }) => Container(
-    padding: const EdgeInsets.all(18),
-    decoration: BoxDecoration(
-      color: AppColors.white,
-      borderRadius: BorderRadius.circular(22),
-      border: Border.all(color: AppColors.borderLight),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.02),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: tint,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(icon, color: accent, size: 24),
+  }) =>
+      Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: AppColors.borderLight),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16.5,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.dark,
-                    ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: tint,
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: accent,
-                    ),
+                  child: Icon(icon, color: accent, size: 24),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 16.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.dark,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: accent,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              description,
+              style: const TextStyle(
+                  fontSize: 13, color: AppColors.muted, height: 1.4),
+            ),
+            const SizedBox(height: 14),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: ElevatedButton(
+                onPressed: onTap,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: accent,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                ),
+                child: Text(
+                  buttonText,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 13.5),
+                ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 10),
-        Text(
-          description,
-          style: const TextStyle(fontSize: 13, color: AppColors.muted, height: 1.4),
-        ),
-        const SizedBox(height: 14),
-        SizedBox(
-          width: double.infinity,
-          height: 44,
-          child: ElevatedButton(
-            onPressed: onTap,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: accent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-            ),
-            child: Text(
-              buttonText,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13.5),
-            ),
-          ),
-        ),
-      ],
-    ),
-  );
+      );
 }
