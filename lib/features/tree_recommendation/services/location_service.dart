@@ -49,6 +49,20 @@ class LocationService {
   }
 
   Future<LandLocation> currentLocation() async {
+    final location = await currentCoordinates();
+    final address = await reverseGeocode(
+      latitude: location.latitude,
+      longitude: location.longitude,
+    );
+    return LandLocation(
+      name: address,
+      latitude: location.latitude,
+      longitude: location.longitude,
+      label: 'Current Location',
+    );
+  }
+
+  Future<LandLocation> currentCoordinates() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
       throw const LocationServiceDisabledException();
     }
@@ -63,17 +77,17 @@ class LocationService {
       throw const LocationPermissionDeniedForeverException();
     }
     final position = await Geolocator.getCurrentPosition();
-    final address = await reverseGeocode(
-      latitude: position.latitude,
-      longitude: position.longitude,
-    );
     return LandLocation(
-      name: address,
+      name: '',
       latitude: position.latitude,
       longitude: position.longitude,
       label: 'Current Location',
     );
   }
+
+  Future<bool> openAppSettings() => Geolocator.openAppSettings();
+
+  Future<bool> openLocationSettings() => Geolocator.openLocationSettings();
 
   Future<String> reverseGeocode({
     required double latitude,
